@@ -1,13 +1,21 @@
 const db = require("../config/db");
 
 module.exports = {
-    async getAllUsers() {
-        const [rows] = await db.query('SELECT * FROM user');
-        return rows;
+      async getAllUsers() {
+          const [rows] = await db.query('SELECT * FROM user');
+          return rows;
     },
-    async createUser(username, skillpoints) {
-        const [result] = await db.query('INSERT INTO user (username, skillpoints) VALUES (?, ?)', [username, skillpoints]);
-        return result.insertId; // insertId is a small object used
+      async createUser(username, email, password) {
+        const [result] = await db.query('INSERT INTO user (username, email, password) VALUES (?, ?, ?)', [username, email, password]);
+        return result.insertId;
+    },
+      async checkEmailExists(email) {
+        const [rows] = await db.query('SELECT 1 FROM user WHERE email = ?', [email]);
+        return rows.length > 0;
+    },
+      async getUserByEmail(email) {
+        const [rows] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
+        return rows[0]; // Return user object
     },
       async checkUsernameExists(username) {
         const [rows] = await db.query('SELECT 1 FROM user WHERE username = ?', [username]);
@@ -44,4 +52,5 @@ module.exports = {
       async deleteUser(user_id) {
         await db.query('DELETE FROM user WHERE user_id = ?', [user_id]);
     },
+    
 }

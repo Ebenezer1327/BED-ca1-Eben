@@ -6,66 +6,108 @@
     <title>Login/Register with Animated Background</title>
     <link rel="stylesheet" href="../css/style.css">
     <script src="../js/javascript.js" defer></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+    <!-- Animated Background -->
     <div class="area">
         <ul class="circles">
-            <li><img src="../Images/bulbasar.png"></li>
-            <li><img src="../Images/caterpie.png"></li>
-            <li><img src="../Images/Gengar.png"></li>
-            <li><img src="../Images/Mudkip.png"></li>
-            <li><img src="../Images/Pikachu.png"></li>
-            <li><img src="../Images/Squirtle.png"></li>
-            <li><img src="../Images/Treko.png"></li>
-            <li><img src="../Images/Zekrom.png"></li>
-            <li><img src="../Images/Zorak.png"></li>
-            <li><img src="../Images/Dratini.png"></li>
-            <li><img src="../Images/Snivy.png"></li>
-            <li><img src="../Images/jigglypuff.png"></li>
-            <li><img src="../Images/Snorlax.png"></li>
-            <li><img src="../Images/HO OH.png"></li>
-            <li><img src="../Images/Lugia.png"></li>
-            <li><img src="../Images/Minun.png"></li>
-            <li><img src="../Images/Infernape.png"></li>
-
+            <li><img src="../Images/bulbasar.png" alt="Bulbasaur"></li>
+            <!-- Add other Pokémon images as per your existing code -->
         </ul>
     </div>
-    
-<div class="container" id="container">
-	<div class="form-container sign-up-container">
-		<form action="#">
-			<h1 id="CreateAcc">Create Account</h1>
-			<input type="text" placeholder="Name" />
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
-			<button>Sign Up</button>
-		</form>
-	</div>
-	<div class="form-container sign-in-container">
-		<form action="#">
-			<h1 id="signIN">Sign in</h1>
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
-			<a href="#">Forgot your password?</a>
-			<button>Sign In</button>
-		</form>
-	</div>
-	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-left">
-				<h1>Welcome Back!</h1>
-				<p>To keep connected with us please login with your trainer info</p>
-				<button class="ghost" id="signIn">Sign In</button>
-			</div>
-			<div class="overlay-panel overlay-right">
-				<h1>Hello, Trainer!</h1>
-				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp">Sign Up</button>
-			</div>
-		</div>
-	</div>
-</div>
 
+    <!-- Login/Signup Form -->
+    <div class="container" id="container">
+        <!-- Signup Form -->
+		<div class="form-container sign-up-container">
+			<form id="signup-form">
+				<h1 id="CreateAcc">Create Account</h1>
+				<label for="signup-username">Username:</label>
+				<input type="text" id="signup-username" name="username" placeholder="Username" required aria-label="Username" />
+
+				<label for="signup-email">Email:</label>
+				<input type="email" id="signup-email" name="email" placeholder="Email" required aria-label="Email" />
+				<span id="signup-email-error" class="error" style="display:none;">Please enter a valid email address.</span>
+
+				<label for="signup-password">Password:</label>
+				<input type="password" id="signup-password" name="password" placeholder="Password" required aria-label="Password" minlength="6" />
+				<button type="button" onclick="registerUser();">Register</button>
+				<div id="message"></div>
+			</form>
+		</div>
+		
+
+        <!-- Login Form -->
+        <div class="form-container sign-in-container">
+            <form id="login-form" action="/api/users/login" method="POST">
+                <h1 id="signIN">Sign in</h1>
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="email" placeholder="Email" required aria-label="Email" />
+                
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="password" placeholder="Password" required aria-label="Password" />
+                <a href="#">Forgot your password?</a>
+                <button type="button" onclick="loginUser();">Sign In</button>
+				<div id="LoginMessage"></div>
+            </form>
+        </div>
+
+        <!-- Overlay Section -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your trainer info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Trainer!</h1>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<script>
+    function registerUser() {
+    const username = document.getElementById("signup-username").value;
+    const email = document.getElementById("signup-email").value;
+    const password = document.getElementById("signup-password").value;
+
+    axios.post("http://localhost:3000/users/register", { username, email, password })
+	.then(function (response) {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = response.data.message;
+                messageDiv.style.color = 'green'
+            })
+            .catch(function (error) {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = error.response.data.message;
+                messageDiv.style.color = 'red'
+            })
+        }
+
+		function loginUser() {
+            const email = document.getElementById("login-email").value;
+            const password = document.getElementById("login-password").value;
+
+            axios.post("http://localhost:3000/users/login", { email, password })
+                .then(function (response) {
+                    const messageDiv = document.getElementById('LoginMessage');
+                messageDiv.textContent = response.data.message;
+                messageDiv.style.color = 'green'
+				window.location.href = "gameHome.html";
+            })
+            .catch(function (error) {
+                const messageDiv = document.getElementById('LoginMessage');
+                messageDiv.textContent = error.response.data.message;
+                messageDiv.style.color = 'red'
+            })
+        }
+
+    </script>
 
 </body>
 </html>

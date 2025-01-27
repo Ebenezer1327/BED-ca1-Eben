@@ -1,5 +1,6 @@
 const userModel = require('../models/userModel');
 const responseView = require('../views/responseView');
+const bcrypt = require('bcrypt');
  
 module.exports = {
   async listUsers(req, res) {
@@ -11,28 +12,64 @@ module.exports = {
     }
   },
 
-  async createUser(req, res) {
+
+  async registerUser(req, res) {
     try {
-        // making skillpoints be default 0
-        const { username, skillpoints = 0 } = req.body;
+      const { username, email, password } = req.body;
 
-        // check if username is missing
-        if (!username) {
-            return responseView.sendError(res, null, 'Username is required', 400); // 400 Bad Request
-        }
+      // Validate inputs
+      if (!username || !email || !password) {
+        return res.status(409).json({message: "All Fields required"});
+      }
 
-        // check if username already exists
-        const userExists = await userModel.checkUsernameExists(username);
-        if (userExists) {
-            return responseView.sendError(res, null, 'Username is already taken', 409); // 409 Conflict
-        }
+      const UsernameExists = await userModel.checkUsernameExists(username);
+      if (UsernameExists) {
+        return res.status(409).json({message: "Username already exist"});
+      }
 
-        const userId = await userModel.createUser(username, skillpoints);
-        return responseView.sendSuccess(
-            res, { user_id: userId, username, skillpoints }, 201 
-        );
+
+      // Check if email already exists
+      const emailExists = await userModel.checkEmailExists(email);
+      if (emailExists) {
+        return res.status(409).json({message: "Email already exist"});
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Save to database
+      const userId = await userModel.createUser(username, email, hashedPassword);
+      res.status(201).json({message: "User registered successfully!", user_id: userId, username, email });
     } catch (err) {
-        responseView.sendError(res, 'Failed to create user', err, 500); // 500 Internal Server Error
+      res.status(500).json({message: "Failed to register"});
+    }
+  },
+
+  async loginUser(req, res) {
+    try {
+      const { email, password } = req.body;
+
+      // Validate inputs
+      if (!email || !password) {
+        return res.status(400).json({message: "Missing Field"});
+      }
+
+      // Fetch user from database
+      const user = await userModel.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({message: "Invalid credentials"});
+      }
+
+      // Verify password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({message: "Invalid credentials"});
+      }
+
+      // Return success response
+      res.status(201).json({message: "User registered successfully!", user_id: user.id, username: user.username, email: user.email });
+    } catch (err) {
+      res.status(500).json({message: "Failed To Login"});
     }
   },
 
