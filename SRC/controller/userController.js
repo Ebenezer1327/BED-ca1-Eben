@@ -126,4 +126,21 @@ async deleteUser(req, res) {
   }
 },
 
-}
+// Example Controllers for Token Management
+preTokenGenerate(req, res, next) {
+  res.locals.userId = req.body.id;
+  next();
+},
+
+beforeSendToken(req, res, next) {
+  res.locals.message = `Token is generated.`;
+  next();
+},
+
+showTokenVerified(req, res, next) {
+  res.status(200).json({
+    userId: res.locals.userId,
+    message: "Token is verified.",
+  });
+},
+};
