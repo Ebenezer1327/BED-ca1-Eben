@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            margin-top: 80px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        #userSearch {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #userList {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        #userList li {
+            cursor: pointer;
+            padding: 12px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #userList li:hover {
+            background-color: #e9ecef;
+        }
+
+        #messageInput {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        #sendButton {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        #sendButton:hover {
+            background-color: #45a049;
+        }
+
+        #sendButton:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        #messageDisplay {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #ffffff;
+            min-height: 150px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message {
+            margin-bottom: 15px;
+        }
+
+        .message strong {
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="MDB Logo" draggable="false" height="30" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="fintess.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h1>Message Page</h1>
+    <input type="text" id="userSearch" placeholder="Search for a user ID">
+    <ul id="userList"></ul>
+    <input type="text" id="messageInput" placeholder="Type your message here" disabled>
+    <button id="sendButton" disabled>Send</button>
+    <div id="messageDisplay"></div>
+
+    <script>
+        const users = [
+            { id: 'user1', name: 'Alice' },
+            { id: 'user2', name: 'Bob' },
+            { id: 'user3', name: 'Charlie' },
+            { id: 'user4', name: 'David' },
+            { id: 'user5', name: 'Eve' }
+        ];
+
+        const userSearch = document.getElementById('userSearch');
+        const userList = document.getElementById('userList');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const messageDisplay = document.getElementById('messageDisplay');
+
+        let selectedUser = null;
+
+        function populateUserList(filter = '') {
+            userList.innerHTML = '';
+            users.filter(user => user.id.includes(filter) || user.name.toLowerCase().includes(filter.toLowerCase()))
+                 .forEach(user => {
+                     const li = document.createElement('li');
+                     li.textContent = `${user.id} - ${user.name}`;
+                     li.onclick = () => selectUser(user);
+                     userList.appendChild(li);
+                 });
+        }
+
+        function selectUser(user) {
+            selectedUser = user;
+            userSearch.value = `${user.id} - ${user.name}`;
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            userList.innerHTML = '';
+        }
+
+        function sendMessage() {
+            if (selectedUser && messageInput.value.trim() !== '') {
+                const message = messageInput.value.trim();
+                messageDisplay.innerHTML += `<div class="message"><strong>To ${selectedUser.name}:</strong> ${message}</div>`;
+                messageInput.value = '';
+            }
+        }
+
+        userSearch.addEventListener('input', () => populateUserList(userSearch.value));
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        populateUserList();
+    </script>
+</body>
+</html>

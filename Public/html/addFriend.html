@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        
+         body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            margin-top: 80px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        #friendIdInput {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        #addFriendButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #addFriendButton:hover {
+            background-color: #45a049;
+        }
+        #addFriendButton:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+        #friendsList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #friendsList li {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .removeFriendButton {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        .removeFriendButton:hover {
+            background-color: #d32f2f;
+        }
+        #message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="MDB Logo" draggable="false" height="30" />
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="fintess.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h1>Friend Manager</h1>
+    <input type="text" id="friendIdInput" placeholder="Enter friend ID" aria-label="Friend ID">
+    <button id="addFriendButton">Add Friend</button>
+    <div id="message" role="alert"></div>
+    <h2>Friends List</h2>
+    <ul id="friendsList" aria-live="polite"></ul>
+
+    <script>
+        const friendIdInput = document.getElementById('friendIdInput');
+        const addFriendButton = document.getElementById('addFriendButton');
+        const message = document.getElementById('message');
+        const friendsList = document.getElementById('friendsList');
+
+        // Simulated friends list
+        let friends = [];
+
+        function addFriend() {
+            const friendId = friendIdInput.value.trim();
+            if (friendId === '') {
+                showMessage('Please enter a friend ID', 'error');
+                return;
+            }
+
+            if (friends.includes(friendId)) {
+                showMessage('This friend is already in your list', 'error');
+                return;
+            }
+
+            // Simulate adding friend (in a real app, this would involve a server request)
+            friends.push(friendId);
+            updateFriendsList();
+            showMessage('Friend added successfully!', 'success');
+            friendIdInput.value = '';
+        }
+
+        function removeFriend(friendId) {
+            friends = friends.filter(friend => friend !== friendId);
+            updateFriendsList();
+            showMessage('Friend removed successfully!', 'success');
+        }
+
+        function updateFriendsList() {
+            friendsList.innerHTML = '';
+            friends.forEach(friend => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${friend}</span>
+                    <button class="removeFriendButton" aria-label="Remove ${friend}">Remove</button>
+                `;
+                li.querySelector('.removeFriendButton').addEventListener('click', () => removeFriend(friend));
+                friendsList.appendChild(li);
+            });
+        }
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = type;
+            setTimeout(() => {
+                message.textContent = '';
+                message.className = '';
+            }, 3000);
+        }
+
+        addFriendButton.addEventListener('click', addFriend);
+        friendIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addFriend();
+            }
+        });
+
+        // Enable/disable button based on input
+        friendIdInput.addEventListener('input', () => {
+            addFriendButton.disabled = friendIdInput.value.trim() === '';
+        });
+    </script>
+</body>
+</html>

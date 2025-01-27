@@ -7,7 +7,7 @@ module.exports = {
     try {
         const challenges = await fitnessModel.getAllChallenges();
 
-        // map over the array of challenges to format the response ( ChatGPT )
+        // map over the array of challenges to format the response
         const responsePayload = challenges.map((challenge) => ({
             challenge_id: challenge.challenge_id,
             challenge: challenge.challenge,

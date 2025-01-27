@@ -29,9 +29,7 @@ module.exports = {
 
         const userId = await userModel.createUser(username, skillpoints);
         return responseView.sendSuccess(
-            res, 
-            { user_id: userId, username, skillpoints },
-            201 
+            res, { user_id: userId, username, skillpoints }, 201 
         );
     } catch (err) {
         responseView.sendError(res, 'Failed to create user', err, 500); // 500 Internal Server Error
