@@ -7,28 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-
-        body {
-            padding-top: 56px; /* Add top padding for fixed navbar */
-        }
-        .carousel-item img {
-            object-fit: cover;
-            width: 100%; /* Make carousel image span the full width */
-            height: 100%; /* Set a custom height for the carousel */
-        }
-        .carousel-inner {
-            width: 100%;
-            height: 100%; /* Match height to the image height */
-        }
-
-        .card {
-            transition: transform 0.3s ease-in-out;
-        }
-        .card:hover {
-            transform: scale(1.05);
-        }
-    </style>
+    <script src="../js/gameHome.js"></script>
+    <link rel="stylesheet" href="../css/gameHome.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -42,6 +22,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto align-items-center">
+
+                    <div id="user-id-display" class="pe-10"></div> <!-- This is where the user_id will be displayed -->
                     <li class="nav-item">
                         <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
                     </li>
@@ -63,6 +45,9 @@
                     <li class="nav-item">
                         <a class="nav-link mx-2" href="fintess.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-2" href="review.html"><i class="fas fa-comment-dots pe-2"></i>Reviews</a>
+                    </li>
                     <li class="nav-item ms-3">
                         <a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a>
                     </li>
@@ -70,6 +55,7 @@
             </div>
         </div>
     </nav>
+
 
     <!-- Carousel -->
     <div id="homeCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -94,44 +80,71 @@
         </button>
     </div>
 
+    <!-- Features Section -->
+    <section class="container my-5 text-center">
+        <h2 class="mb-4">Game Features</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="fas fa-dragon fa-3x"></i>
+                    <h4>Train Pokémon</h4>
+                    <p>Level up and evolve your Pokémon to become stronger.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="fas fa-bolt fa-3x"></i>
+                    <h4>Battle Friends</h4>
+                    <p>Challenge your friends in epic Pokémon battles.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <i class="fas fa-globe fa-3x"></i>
+                    <h4>Explore Regions</h4>
+                    <p>Discover new locations filled with hidden Pokémon.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Cards Section -->
     <div class="container mt-5">
-        <h2 class="mb-4">Legendary Pokemon</h2>
+        <h2 class="text-center mb-4">Legendary Pokémon</h2>
         <div class="row">
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="../Images/entei.png" class="card-img-top" alt="Card 1">
-                    <div class="card-body">
-                        <h5 class="card-title">Card 1</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                <div class="card shadow-lg">
+                    <img src="../Images/entei.png" class="card-img-top" alt="Entei">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Entei</h5>
+                        <p class="card-text">The Volcano Pokémon, Entei brings fiery destruction wherever it roams.</p>
+                        <a href="#" class="btn btn-danger">See More</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="../Images/suicune.png" class="card-img-top" alt="Card 2">
-                    <div class="card-body">
-                        <h5 class="card-title">Card 2</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                <div class="card shadow-lg">
+                    <img src="../Images/suicune.png" class="card-img-top" alt="Suicune">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Suicune</h5>
+                        <p class="card-text">Suicune, the Aurora Pokémon, embodies the purity of flowing water.</p>
+                        <a href="#" class="btn btn-primary">See More</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 mb-4">
-                <div class="card">
-                    <img src="../Images/Raikou.png" class="card-img-top" alt="Card 3">
-                    <div class="card-body">
-                        <h5 class="card-title">Card 3</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                <div class="card shadow-lg">
+                    <img src="../Images/Raikou.png" class="card-img-top" alt="Raikou">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Raikou</h5>
+                        <p class="card-text">Raikou, the Thunder Pokémon, races through the skies with electric speed.</p>
+                        <a href="#" class="btn btn-warning">See More</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    
 </body>
 </html>
 

@@ -1,0 +1,34 @@
+body {
+            padding-top: 56px; /* Add top padding for fixed navbar */
+        }
+        .carousel-item img {
+            object-fit: cover;
+            width: 100%; /* Make carousel image span the full width */
+            height: 100%; /* Set a custom height for the carousel */
+        }
+        .carousel-inner {
+            width: 100%;
+            height: 100%; /* Match height to the image height */
+        }
+
+        .card {
+            transition: transform 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        /* Features Section */
+.features-section {
+    padding: 50px 0;
+    background-color: #fff;
+}
+.features-section .feature {
+    text-align: center;
+    padding: 20px;
+}
+.features-section i {
+    font-size: 3rem;
+    color: #007bff;
+    margin-bottom: 15px;
+}

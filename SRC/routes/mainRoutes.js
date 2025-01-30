@@ -17,6 +17,7 @@ const fitnessRoutes = require('./fitnessRoutes');
 const petRoutes = require('./petRoutes');
 const friendshipRoutes = require('./friendshipRoutes');
 const messageRoutes = require('./messageRoutes');
+const reviewRoutes = require('./reviewRoutes');
 const userController = require('../controller/userController');
 const jwtMiddleware = require('../middleware/jwtMiddleware');
 
@@ -29,6 +30,8 @@ router.use("/challenges", fitnessRoutes);
 router.use("/pets", petRoutes);
 router.use("/friendship", friendshipRoutes);
 router.use("/message", messageRoutes);
+router.use("/review", reviewRoutes);
+
 
 
 

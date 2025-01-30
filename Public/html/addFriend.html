@@ -83,45 +83,50 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="MDB Logo" draggable="false" height="30" />
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="fintess.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a>
-                    </li>
-                </ul>
-            </div>
+   <!-- Navbar -->
+   <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="MDB Logo" draggable="false" height="30" />
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto align-items-center">
+
+                <div id="user-id-display" class="pe-10"></div> <!-- This is where the user_id will be displayed -->
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="fintess.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="review.html"><i class="fas fa-comment-dots pe-2"></i>Reviews</a>
+                </li>
+                <li class="nav-item ms-3">
+                    <a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <h1>Friend Manager</h1>
     <input type="text" id="friendIdInput" placeholder="Enter friend ID" aria-label="Friend ID">

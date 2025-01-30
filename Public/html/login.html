@@ -4,16 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login/Register with Animated Background</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="../js/javascript.js" defer></script>
+    <link rel="stylesheet" href="../css/login.css">
+    <script src="../js/login.js" defer></script>
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <!-- Animated Background -->
     <div class="area">
         <ul class="circles">
             <li><img src="../Images/bulbasar.png" alt="Bulbasaur"></li>
-            <!-- Add other Pokémon images as per your existing code -->
+            <li><img src="../Images/caterpie.png" alt="Caterpie"></li>
+            <li><img src="../Images/Gengar.png" alt="Gengar"></li>
+            <li><img src="../Images/Mudkip.png" alt="Mudkip"></li>
+            <li><img src="../Images/Pikachu.png" alt="Pikachu"></li>
+            <li><img src="../Images/Squirtle.png" alt="Squirtle"></li>
+            <li><img src="../Images/Treko.png" alt="Treecko"></li>
+            <li><img src="../Images/Zekrom.png" alt="Zekrom"></li>
+            <li><img src="../Images/Zorak.png" alt="Zoroark"></li>
+            <li><img src="../Images/Dratini.png" alt="Dratini"></li>
+            <li><img src="../Images/Snivy.png" alt="Snivy"></li>
+            <li><img src="../Images/jigglypuff.png" alt="Jigglypuff"></li>
+            <li><img src="../Images/Snorlax.png" alt="Snorlax"></li>
+            <li><img src="../Images/HO OH.png" alt="Ho-oh"></li>
+            <li><img src="../Images/Lugia.png" alt="Lugia"></li>
+            <li><img src="../Images/Minun.png" alt="Minun"></li>
+            <li><img src="../Images/Infernape.png" alt="Infernape"></li>
         </ul>
     </div>
 
@@ -89,23 +103,32 @@
             })
         }
 
-		function loginUser() {
-            const email = document.getElementById("login-email").value;
-            const password = document.getElementById("login-password").value;
+	function loginUser() {
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
 
-            axios.post("http://localhost:3000/users/login", { email, password })
-                .then(function (response) {
-                    const messageDiv = document.getElementById('LoginMessage');
-                messageDiv.textContent = response.data.message;
-                messageDiv.style.color = 'green'
-				window.location.href = "gameHome.html";
-            })
-            .catch(function (error) {
-                const messageDiv = document.getElementById('LoginMessage');
-                messageDiv.textContent = error.response.data.message;
-                messageDiv.style.color = 'red'
-            })
-        }
+    axios.post("http://localhost:3000/users/login", { email, password })
+        .then(function (response) {
+            const messageDiv = document.getElementById('LoginMessage');
+            messageDiv.textContent = response.data.message;
+            messageDiv.style.color = 'green';
+
+            // Store user_id in localStorage
+            localStorage.setItem('user_id', response.data.user_id); 
+
+            // Store username in localStorage
+            localStorage.setItem('username', response.data.username);
+
+            // Redirect to gameHome.html
+            window.location.href = "gameHome.html";
+        })
+        .catch(function (error) {
+            const messageDiv = document.getElementById('LoginMessage');
+            messageDiv.textContent = error.response.data.message;
+            messageDiv.style.color = 'red';
+        });
+}
+
 
     </script>
 

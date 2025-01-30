@@ -1,55 +1,72 @@
-const pool = require('../services/db');
+const db = require('../config/db');
 
-module.exports.selectAll = (callback) =>
-{
-    const SQLSTATMENT = `
-    SELECT * FROM Reviews;
-    `;
+module.exports = {
+    
+    // Use async/await for promise-based database queries
+    async selectAll() {
+        const SQLSTATMENT = `
+        SELECT * FROM Reviews;
+        `;
+        try {
+            const [rows] = await db.query(SQLSTATMENT); // Await the result
+            return rows;
+        } catch (error) {
+            throw error; // Handle error
+        }
+    },
 
-    pool.query(SQLSTATMENT, callback);
-}
+    async selectById(data) {
+        const SQLSTATMENT = `
+        SELECT * FROM Reviews
+        WHERE id = ?;
+        `;
+        const VALUES = [data.id];
+        try {
+            const [rows] = await db.query(SQLSTATMENT, VALUES);
+            return rows;
+        } catch (error) {
+            throw error; // Handle error
+        }
+    },
 
-module.exports.selectById = (data, callback) =>
-{
-    const SQLSTATMENT = `
-    SELECT * FROM Reviews
-    WHERE id = ?;
-    `;
-    const VALUES = [data.id];
+    async insertSingle(data, callback) {
+        const SQLSTATMENT = `
+        INSERT INTO Reviews (review_amt, user_id, message)
+        VALUES (?, ?, ?);
+        `;
+        const VALUES = [data.review_amt, data.user_id, data.message];
+        
+        db.query(SQLSTATMENT, VALUES, callback);
+    },
+    
 
-    pool.query(SQLSTATMENT, VALUES, callback);
-}
+    async updateById(data) {
+        const SQLSTATMENT = `
+        UPDATE Reviews 
+        SET review_amt = ?, user_id = ?, message = ?
+        WHERE id = ?;
+        `;
+        const VALUES = [data.review_amt, data.user_id, data.message, data.id];
+        try {
+            const [result] = await db.query(SQLSTATMENT, VALUES);
+            return result; // Return result of update
+        } catch (error) {
+            throw error; // Handle error
+        }
+    },
 
-module.exports.insertSingle = (data, callback) =>
-{
-    const SQLSTATMENT = `
-    INSERT INTO Reviews (review_amt, user_id)
-    VALUES (?, ?);
-    `;
-    const VALUES = [data.review_amt, data.user_id];
+    async deleteById(data) {
+        const SQLSTATMENT = `
+        DELETE FROM Reviews 
+        WHERE id = ?;
+        `;
+        const VALUES = [data.id];
+        try {
+            const [result] = await db.query(SQLSTATMENT, VALUES);
+            return result; // Return result of delete
+        } catch (error) {
+            throw error; // Handle error
+        }
+    }
 
-    pool.query(SQLSTATMENT, VALUES, callback);
-}
-
-module.exports.updateById = (data, callback) =>
-{
-    const SQLSTATMENT = `
-    UPDATE Reviews 
-    SET review_amt = ?, user_id = ?
-    WHERE id = ?;
-    `;
-    const VALUES = [data.review_amt, data.user_id, data.id];
-
-    pool.query(SQLSTATMENT, VALUES, callback);
-}
-
-module.exports.deleteById = (data, callback) =>
-{
-    const SQLSTATMENT = `
-    DELETE FROM Reviews 
-    WHERE id = ?;
-    `;
-    const VALUES = [data.id];
-
-    pool.query(SQLSTATMENT, VALUES, callback);
-}
+};

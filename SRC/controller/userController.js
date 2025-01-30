@@ -59,6 +59,7 @@ module.exports = {
       if (!user) {
         return res.status(401).json({message: "Invalid credentials"});
       }
+      
 
       // Verify password
       const isMatch = await bcrypt.compare(password, user.password);
@@ -67,7 +68,7 @@ module.exports = {
       }
 
       // Return success response
-      res.status(201).json({message: "User registered successfully!", user_id: user.id, username: user.username, email: user.email });
+      res.status(201).json({message: "User registered successfully!", user_id: user.user_id, username: user.username, email: user.email });
     } catch (err) {
       res.status(500).json({message: "Failed To Login"});
     }

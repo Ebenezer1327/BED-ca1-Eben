@@ -1,140 +1,104 @@
-const model = require("../models/reviewModel.js");
-const pool = require("../services/db.js");
+const reviewModel = require('../models/reviewModel'); // Import the review model
+const db = require('../config/db');
 
-module.exports.createReview = (req, res, next) => {
-    if(req.body.review_amt == undefined)
-    {
-        res.status(400).send("Error: review_amt is undefined");
-        return;
+// Controller to get all reviews
+async function readAllReview(req, res) {
+    try {
+        const reviews = await reviewModel.selectAll(); // Fetch all reviews from the database
+        res.json(reviews); // Send reviews as a JSON response
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle error if the query fails
     }
-    else if(req.body.review_amt > 5 || req.body.review_amt < 1)
-    {
-        res.status(400).send("Error: review_amt can only be between 1 to 5");
-        return;
-    }
-    else if(req.body.user_id == undefined)
-    {
-        res.status(400).send("Error: user_id is undefined");
-        return;
-    }
-
-    const data = {
-        user_id: req.body.user_id,
-        review_amt: req.body.review_amt
-    }
-
-    console.log("data", data);
-
-    const callback = (error, results, fields) => {
-        if (error) {
-            console.error("Error createMessage:", error);
-            res.status(500).json(error);
-        } else {
-            res.status(201).json(results);
-        }
-    }
-
-    model.insertSingle(data, callback);
 }
 
-module.exports.readReviewById = (req, res, next) => {
-    const data = {
-        id: req.params.id
-    }
-
-    const callback = (error, results, fields) => {
-        if (error) {
-            console.error("Error readReviewById:", error);
-            res.status(500).json(error);
+// Controller to get a review by its ID
+async function readReviewById(req, res) {
+    const reviewId = req.params.id; // Get review ID from the URL parameter
+    try {
+        const review = await reviewModel.selectById({ id: reviewId }); // Fetch the review by ID
+        if (review.length > 0) {
+            res.json(review); // Send review as a JSON response
         } else {
-            if(results.length == 0) 
-            {
-                res.status(404).json({
-                    message: "Review not found"
-                });
-            }
-            else res.status(200).json(results[0]);
+            res.status(404).json({ message: 'Review not found' }); // Handle case when review is not found
         }
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle error if the query fails
     }
-
-    model.selectById(data, callback);
 }
 
-module.exports.readAllReview = (req, res, next) => {
-    const callback = (error, results, fields) => {
-        if (error) {
-            console.error("Error readAllReview:", error);
-            res.status(500).json(error);
-        } else {
-            res.status(200).json(results);
-        }
-    }
+async function createReview(req, res) {
+    const { review_amt, user_id, message } = req.body; // Get review details from the request body
 
-    model.selectAll(callback);
+    try {
+        // Check if the user exists in the User table (or friends table if you prefer)
+        const [user] = await db.query(
+            `SELECT user_id FROM User WHERE user_id = ?`,
+            [user_id]
+        );
+
+        // If the user does not exist
+        if (user.length === 0) {
+            return res.status(400).json({ error: 'User not found, invalid user_id.' });
+        }
+
+        // Proceed with inserting the review since the user exists
+        const result = await reviewModel.insertSingle({ review_amt, user_id, message }); 
+        
+        // If insertion was successful
+        res.status(201).json({ message: 'Review added successfully', result });
+    } catch (error) {
+        console.error('Error:', error);  // Log the error for debugging
+        res.status(500).json({ error: error.message }); // Handle other errors
+    }
 }
 
-module.exports.updateReviewById = (req, res, next) => {
-    if(req.params.id == undefined)
-    {
-        res.status(400).send("Error: id is undefined");
-        return;
-    }
-    else if(req.body.review_amt == undefined)
-    {
-        res.status(400).send("Error: review_amt is undefined");
-        return;
-    }
-    else if(req.body.review_amt > 5 || req.body.review_amt < 1)
-    {
-        res.status(400).send("Error: review_amt can only be between 1 to 5");
-        return;
-    }
-    else if(req.body.user_id == undefined)
-    {
-        res.status(400).send("Error: userId is undefined");
-        return;
-    }
+// Controller to update a review by its ID
+async function updateReview(req, res) {
+    const reviewId = req.params.id; // Get review ID from the URL parameter
+    const { review_amt, user_id, message } = req.body; // Get new review details from the request body
+    try {
 
-    const data = {
-        id: req.params.id,
-        user_id: req.body.user_id,
-        review_amt: req.body.review_amt
-    }
+        // Check if the user exists in the User table (or friends table if you prefer)
+        const [user] = await db.query(
+            `SELECT user_id FROM User WHERE user_id = ?`,
+            [user_id]
+        );
 
-    const callback = (error, results, fields) => {
-        if (error) {
-            console.error("Error updateReviewById:", error);
-            res.status(500).json(error);
-        } else {
-            res.status(204).send();
+        // If the user does not exist
+        if (user.length === 0) {
+            return res.status(400).json({ error: 'User not found, invalid user_id.' });
         }
+        
+        const result = await reviewModel.updateById({ id: reviewId, review_amt, user_id, message }); // Update review
+        if (result.affectedRows > 0) {
+            res.json({ message: 'Review updated successfully' }); // Send success response
+        } else {
+            res.status(404).json({ message: 'Review not found' }); // Handle case when review is not found
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle error if the query fails
     }
-
-    model.updateById(data, callback);
 }
 
-module.exports.deleteReviewById = (req, res, next) => {
-    const data = {
-        id: req.params.id
-    }
-
-    const callback = (error, results, fields) => {
-        if (error) {
-            console.error("Error deleteReviewById:", error);
-            res.status(500).json(error);
+// Controller to delete a review by its ID
+async function deleteReview(req, res) {
+    const reviewId = req.params.id; // Get review ID from the URL parameter
+    try {
+        const result = await reviewModel.deleteById({ id: reviewId }); // Delete review
+        if (result.affectedRows > 0) {
+            res.json({ message: 'Review deleted successfully' }); // Send success response
         } else {
-            if(results.affectedRows == 0) 
-            {
-                res.status(404).json({
-                    message: "Review not found"
-                });
-            }
-            else
-            {
-                res.status(204).send();
-            }
+            res.status(404).json({ message: 'Review not found' }); // Handle case when review is not found
         }
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle error if the query fails
     }
-
-    model.deleteById(data, callback);
 }
+
+module.exports = {
+    readAllReview,
+    readReviewById,
+    createReview,
+    updateReview,
+    deleteReview
+};
