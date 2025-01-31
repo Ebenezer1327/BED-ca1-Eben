@@ -7,8 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        body {
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<style>
+    body {
             font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
             max-width: 800px;
@@ -87,8 +89,7 @@
             font-weight: bold;
             margin-bottom: 20px;
         }
-    </style>
-</head>
+</style>
 <body>
 
     <!-- Navbar -->
@@ -102,8 +103,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto align-items-center">
-
                     <div id="user-id-display" class="pe-10"></div> <!-- This is where the user_id will be displayed -->
+                    <div id="username-display" class="pe-10"></div> <!-- This is where the username will be displayed -->
                     <li class="nav-item">
                         <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
                     </li>
@@ -135,82 +136,143 @@
             </div>
         </div>
     </nav>
-
+    
     <h1>Fitness Challenges</h1>
-    <div id="skillPoints">Skill Points: 0</div>
+    <div id="skillpoints"></div>
     <ul id="challengesList"></ul>
-
+    
     <script>
-        const challenges = [
-            { id: 1, name: "30-minute jog", points: 20 },
-            { id: 2, name: "50 push-ups", points: 15 },
-            { id: 3, name: "100 squats", points: 25 },
-            { id: 4, name: "15-minute plank", points: 30 },
-            { id: 5, name: "5-mile bike ride", points: 20 },
-        ];
-
-        let skillPoints = 0;
-        const challengesList = document.getElementById('challengesList');
-        const skillPointsDisplay = document.getElementById('skillPoints');
-
-        function updateSkillPoints() {
-            skillPointsDisplay.textContent = `Skill Points: ${skillPoints}`;
+        // Get username from localStorage
+        const username = localStorage.getItem('username');
+        if (username) {
+            document.getElementById('username-display').textContent = `Hello, ${username}`;
         }
 
-        function createChallengeCard(challenge) {
-            const li = document.createElement('li');
-            li.className = 'challenge-card';
-            li.innerHTML = `
-                <div class="challenge-info">
-                    <h3>${challenge.name}</h3>
-                    <p>Points: ${challenge.points}</p>
-                </div>
-                <div class="challenge-actions">
-                    <button class="complete-btn" onclick="completeChallenge(${challenge.id})">Complete</button>
-                    <button class="fail-btn" onclick="failChallenge(${challenge.id})">Fail (5 pts)</button>
-                </div>
-            `;
-            return li;
-        }
+        axios.get('http://localhost:3000/challenges')
+            .then(response => {
+                const challenges = response.data;
+                const challengesList = document.getElementById('challengesList');
 
-        function completeChallenge(id) {
-            const challengeCard = document.querySelector(`[onclick="completeChallenge(${id})"]`).closest('.challenge-card');
-            challengeCard.classList.add('completed');
-            challengeCard.classList.remove('failed');
-            const challenge = challenges.find(c => c.id === id);
-            skillPoints += challenge.points;
-            updateSkillPoints();
-            disableButtons(challengeCard);
-        }
+                challenges.forEach(challenge => {
+                    const challengeCard = document.createElement('li');
+                    challengeCard.classList.add('challenge-card');
 
-        function failChallenge(id) {
-            const challengeCard = document.querySelector(`[onclick="failChallenge(${id})"]`).closest('.challenge-card');
-            challengeCard.classList.add('failed');
-            challengeCard.classList.remove('completed');
-            skillPoints += 5; // Only get 5 skill points for failing
-            updateSkillPoints();
-            disableButtons(challengeCard);
-        }
+                    const challengeInfo = document.createElement('div');
+                    challengeInfo.classList.add('challenge-info');
+                    
+                    const challengeTitle = document.createElement('h2');
+                    challengeTitle.textContent = challenge.challenge;
+                    challengeInfo.appendChild(challengeTitle);
+                    
+                    const challengePoints = document.createElement('p');
+                    challengePoints.textContent = `Skillpoints: ${challenge.skillpoints}`;
+                    challengeInfo.appendChild(challengePoints);
+                    
+                    const challengeActions = document.createElement('div');
+                    challengeActions.classList.add('challenge-actions');
 
-        function disableButtons(card) {
-            const buttons = card.querySelectorAll('button');
-            buttons.forEach(button => {
-                button.disabled = true;
-                button.style.opacity = '0.5';
-                button.style.cursor = 'not-allowed';
+                    const passButton = document.createElement('button');
+                    passButton.textContent = 'Pass';
+                    passButton.classList.add('complete-btn');
+                    passButton.onclick = () => handleChallengeResult(challenge.challenge_id, 'pass');
+                    
+                    const failButton = document.createElement('button');
+                    failButton.textContent = 'Fail';
+                    failButton.classList.add('fail-btn');
+                    failButton.onclick = () => handleChallengeResult(challenge.challenge_id, 'fail');
+                    
+                    challengeActions.appendChild(passButton);
+                    challengeActions.appendChild(failButton);
+                    
+                    challengeCard.appendChild(challengeInfo);
+                    challengeCard.appendChild(challengeActions);
+                    
+                    challengesList.appendChild(challengeCard);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching challenges:', error.response ? error.response.data : error.message);
             });
-        }
 
-        function initializeChallenges() {
-            challenges.forEach(challenge => {
-                const card = createChallengeCard(challenge);
-                challengesList.appendChild(card);
-            });
-        }
+            function handleChallengeResult(challengeId, result) {
+    console.log("Challenge ID received:", challengeId); // Debugging log
 
-        initializeChallenges();
-        updateSkillPoints();
+    if (!challengeId) {
+        console.error("Invalid challenge ID:", challengeId);
+        alert("Challenge ID is missing. Please refresh the page and try again.");
+        return;
+    }
+
+    // Retrieve user_id from localStorage
+    const userId = localStorage.getItem('user_id');
+    if (!userId) {
+        console.error("User ID not found in localStorage");
+        alert("User ID is missing. Please log in again.");
+        return;
+    }
+
+    // Fetch the user's current skill points
+    axios.get(`http://localhost:3000/users/${userId}`)
+    .then(userResponse => {
+        // Find the user from the array
+        const user = userResponse.data.find(u => u.user_id == userId);
+
+        if (user) {
+            const currentSkillPoints = user.skillpoints || 0;
+            console.log('Current Skill Points:', currentSkillPoints);
+
+            // Now fetch challenge data
+            axios.get(`http://localhost:3000/challenges`)
+                .then(challengeResponse => {
+                    // Find the challenge by its ID
+                    const challenge = challengeResponse.data.find(challenge => challenge.challenge_id === challengeId);
+                    const challengeSkillPoints = challenge ? challenge.skillpoints : 0;
+
+                    console.log('Challenge Skill Points:', challengeSkillPoints);  // Debugging log
+
+                    // Calculate new skill points
+                    let newSkillPoints = currentSkillPoints;
+                    if (result === 'pass') {
+                        newSkillPoints += challengeSkillPoints;
+                    } else {
+                        newSkillPoints += 5; // Award 5 points for failure
+                    }
+
+                    console.log('New Skill Points:', newSkillPoints);  // Debugging log
+
+                    // Update user skill points in the database
+                    axios.put(`http://localhost:3000/users/${userId}`, {
+                        username: user.username,
+                        skillpoints: newSkillPoints
+                    })
+                    .then(updateResponse => {
+                        console.log("Skill points updated:", updateResponse.data);
+                        alert(`You now have ${newSkillPoints} skill points!`);
+                        
+                        // Update skill points on the page
+                        document.getElementById('skillpoints').textContent = `Your skill points: ${newSkillPoints}`;
+                    })
+                    .catch(updateError => {
+                        console.error("Error updating skill points:", updateError.response ? updateError.response.data : updateError.message);
+                        alert("Failed to update skill points. Please try again.");
+                    });
+                })
+                .catch(challengeError => {
+                    console.error("Error fetching challenge data:", challengeError.response ? challengeError.response.data : challengeError.message);
+                    alert("Failed to get challenge details. Please try again.");
+                });
+        } else {
+            console.error("User not found");
+            alert("User not found. Please log in again.");
+        }
+    })
+    .catch(userError => {
+        console.error("Error fetching user data:", userError.response ? userError.response.data : userError.message);
+        alert("Failed to get user data. Please try again.");
+    });
+}
+
+
     </script>
 </body>
 </html>
-

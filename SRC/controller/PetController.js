@@ -38,52 +38,75 @@ async getAllPets(req, res) {
     }
   },
 
-  // train a pet
   async trainPet(req, res) {
     try {
-        const { training_skillpoints } = req.body;
-        const petId = req.params.petId;
-
-        console.log('Request Body:', req.body);
-        console.log('Pet ID:', petId);
-
-        // get details of pet
-        const pet = await petModel.getPetById(petId);
-        console.log('Pet Details:', pet);
-
-        // get detail of user
-        const user = await userModel.getUserById(pet.trainer_id);
-        console.log('User Details:', user);
-
-        if (!pet || !user) {
-            return responseView.sendError(res, null, 'Pet or User not found', 404);
-        }
-
-        // check if user skillpoints is sufficient to train 
-        if (user.skillpoints < training_skillpoints) {
-            return responseView.sendError(res, null, 'Insufficient Skillpoint', 400);
-        }
-
-        // calculate remaining skillpoints after training
-        const remainingSkillpoints = user.skillpoints - training_skillpoints;
-        await userModel.updateSkillPoints(user.user_id, remainingSkillpoints);
-
-        await petModel.addTraining(petId, training_skillpoints);
-
-        const totalTrainingSkillpoints = await petModel.getTotalTrainingSkillpoints(petId);
-
-        // how the model calulate the new level
-        const newLevel = Math.floor(totalTrainingSkillpoints / 50) + 1;
-
-        responseView.sendSuccess(res, {
-            user: { user_id: user.user_id, skillpoints: remainingSkillpoints },
-            pet: { pet_id: pet.pet_id, pet_name: pet.pet_name, total_training_skillpoints: totalTrainingSkillpoints, level: newLevel }
-        });
+      const { training_skillpoints } = req.body;
+      const petId = req.params.petId;
+  
+      console.log('Request Body:', req.body);
+      console.log('Pet ID:', petId);
+  
+      // Get details of pet
+      const pet = await petModel.getPetById(petId);
+      console.log('Pet Details:', pet);
+  
+      // Get details of user
+      const userDetails = await userModel.getUserById(pet.trainer_id);
+      console.log('User Details:', userDetails);  // Log full user details
+  
+      if (!pet || !userDetails.length) {
+        return responseView.sendError(res, null, 'Pet or User not found', 404);
+      }
+  
+      const user = userDetails[0]; // Extract the first user from the array
+  
+      // Check if user.skillpoints exists and is a valid number
+      if (user.skillpoints === undefined || !Number.isFinite(user.skillpoints)) {
+        return responseView.sendError(res, null, 'User skillpoints are not valid', 400);
+      }
+  
+      // Log the skillpoints values to debug
+      console.log('User Skillpoints:', user.skillpoints);
+      console.log('Training Skillpoints:', training_skillpoints);
+  
+      // Check if training skillpoints is a valid number
+      if (!Number.isFinite(training_skillpoints)) {
+        return responseView.sendError(res, null, 'Invalid training skillpoints value', 400);
+      }
+  
+      // Check if user has enough skillpoints
+      if (user.skillpoints < training_skillpoints) {
+        return responseView.sendError(res, null, 'Insufficient Skillpoints', 400);
+      }
+  
+      // Calculate remaining skillpoints after training
+      const remainingSkillpoints = user.skillpoints - training_skillpoints;
+  
+      if (!Number.isFinite(remainingSkillpoints) || remainingSkillpoints < 0) {
+        return responseView.sendError(res, null, 'Insufficient Skillpoints after training', 400);
+      }
+  
+      await userModel.updateSkillPoints(user.user_id, remainingSkillpoints);
+  
+      await petModel.addTraining(petId, training_skillpoints);
+  
+      const totalTrainingSkillpoints = await petModel.getTotalTrainingSkillpoints(petId);
+  
+      // Calculate the new level based on total training skillpoints
+      const newLevel = Math.floor(totalTrainingSkillpoints / 50) + 1;
+  
+      responseView.sendSuccess(res, {
+        user: { user_id: user.user_id, skillpoints: remainingSkillpoints },
+        pet: { pet_id: pet.pet_id, pet_name: pet.pet_name, total_training_skillpoints: totalTrainingSkillpoints, level: newLevel }
+      });
     } catch (err) {
-        console.error('Error in trainPet:', err); 
-        responseView.sendError(res, 'Failed to train pet', err.message || err);
+      console.error('Error in trainPet:', err); 
+      responseView.sendError(res, 'Failed to train pet', err.message || err);
     }
-},
+  },
+  
+  
+  
 
 
   // start a pet battle

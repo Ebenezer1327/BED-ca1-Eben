@@ -122,11 +122,6 @@ async getChallengeById(req, res) {
 
 
 
-
-
-
-
-
   // Completion section 
 
 
@@ -134,42 +129,52 @@ async getChallengeById(req, res) {
   async createCompletion(req, res) {
     try {
         const { user_id, completed, creation_date, notes } = req.body;
-        const challengeId = (req.params.id);
+        const challengeId = req.params.id;
         
+        // checking required fields
+        if (!user_id) {
+            return responseView.sendError(res, null, 'Missing user_id:', 500);
+        }
 
-      // checking required fields
-      if (!user_id) {
-          return responseView.sendError(res, null, 'Missing user_id:', 404);
-      }
-
-      const fitness = await fitnessModel.getChallengeById(challengeId);
+        const fitness = await fitnessModel.getChallengeById(challengeId);
         if (!fitness) {
-          return responseView.sendError(res, null, 'Challenge not found',  404);
+            return responseView.sendError(res, null, 'Challenge not found', 404);
         }
 
         // Validate required fields
         if (!creation_date) {
-          return responseView.sendError(res, null, 'Missing creation_date:', 400);
-      }
+            return responseView.sendError(res, null, 'Missing creation_date:', 400);
+        }
 
-
-      // skillPointsAwarded get what is assign in fitness.skillpoints if the task is completed, or 5 if it is not.
+        // skillPointsAwarded get what is assigned in fitness.skillpoints if the task is completed, or 5 if it is not.
         let skillPointsAwarded = completed ? fitness.skillpoints : 5;
 
-        // award skill points to the user
+        // Ensure skillPointsAwarded is a valid number
+        if (isNaN(skillPointsAwarded)) {
+            return responseView.sendError(res, null, 'Invalid skill points value', 400);
+        }
+
+        // Award skill points to the user
         const user = await userModel.getUserById(user_id);
         if (!user) {
             return responseView.sendError(res, null, 'User not found', 404);
         }
 
-        const updatedSkillPoints = user.skillpoints + skillPointsAwarded;
+        // Ensure the current skill points are a valid number before updating
+        const currentSkillPoints = user.skillpoints || 0; // Default to 0 if skillpoints is null or undefined
+        const updatedSkillPoints = currentSkillPoints + skillPointsAwarded;
+
+        if (isNaN(updatedSkillPoints)) {
+            return responseView.sendError(res, null, 'Invalid updated skill points value', 400);
+        }
+
         await userModel.updateSkillPoints(user_id, updatedSkillPoints);
 
-      // model will insert the challenge into the database and get the challengeId
-      const completeId = await fitnessModel.createCompletion(user_id, challengeId, completed, creation_date, notes);
+        // Model will insert the challenge completion into the database
+        const completeId = await fitnessModel.createCompletion(user_id, challengeId, completed, creation_date, notes);
 
-         // map over the array of challenges to format the response with challenge_id included
-         const responsePayload = {
+        // Map over the array of challenges to format the response with challenge_id included
+        const responsePayload = {
             complete_id: completeId,  
             challenge_id: parseInt(challengeId),
             user_id: user_id,
@@ -178,15 +183,16 @@ async getChallengeById(req, res) {
             notes: notes,
         };
 
-        // send success response with status code 201
+        // Send success response with status code 201
         responseView.sendSuccess(res, responsePayload, 201);
     } catch (err) {
         console.error('Error in createCompletion:', err.message);
 
-        // handle errors and send error response
+        // Handle errors and send error response
         responseView.sendError(res, 'Failed to create challenge', 500);
     }
 },
+
 
 
 

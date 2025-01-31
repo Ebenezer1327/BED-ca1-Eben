@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -52,9 +54,21 @@
             margin-bottom: 10px;
             font-size: 1.2em;
         }
-        .skillpoints-value {
+        .Name-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        .name-value {
             font-size: 2em;
             color: #3498db;
+        }
+        .Name {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 20px;
         }
         #photoUpload {
             display: none;
@@ -122,24 +136,36 @@
         </div>
     </nav>
 
-
     <h1>User Profile</h1>
     <div class="profile-container">
-        <img id="profilePhoto" src="https://via.placeholder.com/200"  class="profile-photo">
+        <img id="profilePhoto" src="https://placekitten.com/200/200" class="profile-photo">
         <div class="photo-upload">
             <label for="photoUpload" class="upload-btn">Upload Photo</label>
             <input type="file" id="photoUpload" accept="image/*" aria-label="Upload profile photo">
         </div>
+
         <div class="skillpoints">
+            <div class="Name-label">Username</div>
+            <div id="Name"></div> <!-- This is where the username will be displayed -->
             <div class="skillpoints-label">Skillpoints</div>
-            <div class="skillpoints-value" id="skillpointsValue">0</div>
-        </div>
+            <div id="skillpoints"></div> <!-- This is where skillpoints will be displayed -->
+        </div>        
     </div>
 
     <script>
+        // Retrieve user_id from localStorage
+        const loggedInUserId = localStorage.getItem('user_id');
+        const userIdDisplay = document.getElementById('user-id-display');
         const profilePhoto = document.getElementById('profilePhoto');
         const photoUpload = document.getElementById('photoUpload');
-        const skillpointsValue = document.getElementById('skillpointsValue');
+        const skillpointsValue = document.getElementById('skillpoints');
+        const usernameValue = document.getElementById('Name');
+
+        if (loggedInUserId) {
+            userIdDisplay.textContent = `Logged in User ID: ${loggedInUserId}`;
+        } else {
+            userIdDisplay.textContent = 'No user is logged in.';
+        }
 
         // Function to handle photo upload
         function handlePhotoUpload(event) {
@@ -157,14 +183,29 @@
         // Add event listener for photo upload
         photoUpload.addEventListener('change', handlePhotoUpload);
 
-        // Function to update skillpoints (simulated)
-        function updateSkillpoints() {
-            const value = Math.floor(Math.random() * 100) + 1; // Random value between 1 and 100
-            skillpointsValue.textContent = value;
+        // Function to fetch and update skillpoints and username based on logged-in user
+        function fetchUserProfile() {
+            if (loggedInUserId) {
+                axios.get(`http://localhost:3000/users/${loggedInUserId}`)
+                    .then(response => {
+                        const user = response.data[0]; // Assuming the response contains an array
+                        const skillpoints = user.skillpoints || 0; // Default to 0 if skillpoints is missing
+                        const username = user.username || 'No username'; // Default to 'No username' if missing
+                        
+                        // Update the UI with the username and skillpoints
+                        usernameValue.textContent = username;
+                        skillpointsValue.textContent = skillpoints;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user profile:', error);
+                    });
+            }
         }
 
-        // Update skillpoints on page load (in a real app, this would fetch from a server)
-        updateSkillpoints();
+        // Fetch and display user profile when the page loads
+        fetchUserProfile();
+
     </script>
+    
 </body>
 </html>
