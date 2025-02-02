@@ -17,27 +17,27 @@
             padding: 40px;
             margin-top: 80px;
         }
-    
+
         h1, h2 {
             color: #333;
             margin-bottom: 20px;
             margin-top: 30px;
         }
-    
+
         #searchInput {
             width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
             font-size: 16px;
         }
-    
+
         #pokemonList {
-            display: grid; /* Change to grid for better control */
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 10px;
             margin-bottom: 20px;
         }
-    
+
         .pokemon-card {
             background-color: white;
             border: 1px solid #ddd;
@@ -48,28 +48,63 @@
             transition: transform 0.2s;
             box-sizing: border-box;
         }
-    
+
+        /* Highlight selected Pokémon */
+        .pokemon-card.selected {
+            border: 2px solid #007bff;
+            box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        /* Start Battle button styling */
+        #battleButton {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #battleButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 0px 15px rgba(255, 75, 43, 0.7);
+        }
+
+        #battleButton:disabled {
+            background: gray;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+
         .pokemon-card:hover {
             transform: scale(1.05);
+            box-shadow: 0px 0px 15px rgba(29, 161, 255, 0.7);
         }
-    
+
         .pokemon-card img {
             max-width: 100%;
             height: auto;
         }
-    
+
         #battleArea {
-            display: grid; /* Grid for battle area */
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 10px;
             margin-bottom: 20px;
         }
-    
+
         #battleButton {
             margin-top: 20px;
         }
+
     </style>
-    
 </head>
 <body>
 
@@ -77,42 +112,23 @@
     <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="MDB Logo" draggable="false" height="30" />
+                <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="Pokémon Logo" draggable="false" height="30" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto align-items-center">
-
-                    <div id="user-id-display" class="pe-10"></div> <!-- This is where the user_id will be displayed -->
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="fintess.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="review.html"><i class="fas fa-comment-dots pe-2"></i>Reviews</a>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a>
-                    </li>
+                    <div id="user-id-display" class="pe-10"></div> <!-- Display user_id -->
+                    <li class="nav-item"><a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="fitness.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="review.html"><i class="fas fa-comment-dots pe-2"></i>Reviews</a></li>
+                    <li class="nav-item ms-3"><a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a></li>
                 </ul>
             </div>
         </div>
@@ -126,100 +142,167 @@
     <div id="battleArea"></div>
     <button id="battleButton" disabled>Start Battle</button>
     <div id="battleLog" aria-live="polite"></div>
-    
 
     <script>
-        let allPets = []; // Store all pets globally
-    
-        // Fetch pets for the logged-in user and for battle area
-        function fetchUserPets() {
-            const loggedInUserId = localStorage.getItem('user_id'); // Get user ID
-    
+        document.addEventListener("DOMContentLoaded", function() {
+            let challengerPetId = null;
+            let opponentPetId = null;
+
+            // Get the logged-in user's ID from localStorage
+            const loggedInUserId = localStorage.getItem('user_id'); 
+            
             if (!loggedInUserId) {
-                alert("No user logged in. Please log in first.");
-                window.location.href = "login.html"; // Redirect to login page
+                console.error('No user logged in!');
                 return;
             }
-    
-            axios.get(`http://localhost:3000/pets/trainer/${loggedInUserId}`)
+            
+            const userId = Number(loggedInUserId); // Convert user_id to a number for comparison
+            
+            // Display Pokémon pets for the logged-in user
+            axios.get(`http://localhost:3000/pets/trainer/${userId}`)
                 .then(response => {
-                    allPets = response.data;
-                    displayPets(allPets, loggedInUserId); // Display user's pets
-                    displayBattleArea(allPets, loggedInUserId); // Display other users' pets for battle
+                    const pokemonList = response.data;
+                    const pokemonListContainer = document.getElementById('pokemonList');
+            
+                    if (pokemonList.length === 0) {
+                        pokemonListContainer.innerHTML = '<p>No Pokémon found for this user.</p>';
+                        return;
+                    }
+            
+                    pokemonListContainer.innerHTML = '';
+            
+                    pokemonList.forEach(pokemon => {
+                        const pokemonCard = document.createElement('div');
+                        pokemonCard.classList.add('pokemon-card');
+                        const level = Math.floor((parseInt(pokemon.total_training_skillpoints) + 50) / 50);
+                        pokemonCard.innerHTML = `
+                            <h4>${pokemon.pet_name}</h4>
+                            <p>pet_id: ${pokemon.pet_id}</p>
+                            <p>${pokemon.species}</p>
+                            <p>Level: ${level}</p>
+                            <button class="btn btn-primary battle-btn" data-pet-id="${pokemon.pet_id}" data-pet-name="${pokemon.pet_name}">Select for Battle</button>
+                        `;
+                        pokemonListContainer.appendChild(pokemonCard);
+                    });
+            
+                    // Attach event listener for battle selection (for the challenger)
+                    const battleBtns = document.querySelectorAll('.battle-btn');
+                    battleBtns.forEach(button => {
+                        button.addEventListener('click', function() {
+                            challengerPetId = button.getAttribute('data-pet-id');
+                            startBattle();
+                        });
+                    });
                 })
                 .catch(error => {
-                    console.error('Error fetching pets:', error);
+                    console.error('Error fetching Pokémon:', error);
                 });
-        }
-    
-        function displayPets(pets, loggedInUserId) {
-            const petsDiv = document.getElementById('pokemonList');
-            petsDiv.innerHTML = ''; // Clear previous results
-            
-            // Filter and display user's pets
-            const userPets = pets.filter(pet => pet.trainer_id == loggedInUserId);
-            userPets.forEach(pet => {
-                // Debugging: Log the original total_training_skillpoints
-                console.log(`Original total_training_skillpoints for ${pet.pet_name}: ${pet.total_training_skillpoints}`);
-                
-                // Correctly add 50 training points (make sure to treat it as a number)
-                const adjustedTrainingSkillpoints = Number(pet.total_training_skillpoints) + 50; // Ensure it's a number
-                console.log(`Adjusted total_training_skillpoints for ${pet.pet_name}: ${adjustedTrainingSkillpoints}`);
-                
-                const level = Math.floor(adjustedTrainingSkillpoints / 50);  // Floor to calculate the correct level
-                console.log(`Calculated level for ${pet.pet_name}: ${level}`);
-                
-                const petElement = document.createElement('div');
-                petElement.classList.add('pokemon-card');
-                petElement.innerHTML = `
-                    <p><strong>${pet.pet_name}</strong></p>
-                    <p><strong>Species: </strong>${pet.species}</p>
-                    <p><strong>Level: </strong>${level}</p>
-                `;
-                petsDiv.appendChild(petElement);
-            });
-            
-            // Display pets for battle area (other than the logged-in user's pets)
-            const battlePets = pets.filter(pet => pet.trainer_id != loggedInUserId);
-            battlePets.forEach(pet => {
-                // Debugging: Log the original total_training_skillpoints
-                console.log(`Original total_training_skillpoints for ${pet.pet_name}: ${pet.total_training_skillpoints}`);
-                
-                // Correctly add 50 training points (make sure to treat it as a number)
-                const adjustedTrainingSkillpoints = Number(pet.total_training_skillpoints) + 50; // Ensure it's a number
-                console.log(`Adjusted total_training_skillpoints for ${pet.pet_name}: ${adjustedTrainingSkillpoints}`);
-                
-                const level = Math.floor(adjustedTrainingSkillpoints / 50);  // Floor to calculate the correct level
-                console.log(`Calculated level for ${pet.pet_name}: ${level}`);
-                
-                const petElement = document.createElement('div');
-                petElement.classList.add('pokemon-card');
-                petElement.innerHTML = `
-                    <p><strong>${pet.pet_name}</strong></p>
-                    <p><strong>Species: </strong>${pet.species}</p>
-                    <p><strong>Level: </strong>${level}</p>
-                    <button class="btn btn-primary battle-btn" data-pet-id="${pet.id}">Select for Battle</button>
-                `;
-                petsDiv.appendChild(petElement);
-            });
-        }
 
-    
-        function filterPets() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const filteredPets = allPets.filter(pet =>
-                pet.pet_name.toLowerCase().includes(searchInput) ||
-                pet.species.toLowerCase().includes(searchInput)
-            );
-            displayPets(filteredPets, localStorage.getItem('user_id')); // Update display with filtered results
-        }
-    
-        document.addEventListener("DOMContentLoaded", () => {
-            fetchUserPets();
-            document.getElementById('searchInput').addEventListener('input', filterPets); // Add event listener for search
+            // Display battle-ready Pokémon from other trainers
+            function displayBattleArea() {
+                axios.get('http://localhost:3000/users')
+                    .then(userResponse => {
+                        const userIds = userResponse.data.map(user => user.user_id);
+                        
+                        const battleAreaContainer = document.getElementById('battleArea');
+                        battleAreaContainer.innerHTML = ''; // Clear previous content
+            
+                        let allPets = [];
+            
+                        const petRequests = userIds
+                        .filter(trainerId => trainerId != loggedInUserId) // Exclude logged-in user
+                        .map(trainerId => 
+                            axios.get(`http://localhost:3000/pets/trainer/${trainerId}`)
+                                .then(petResponse => {
+                                    const trainerPets = petResponse.data.filter(pet => pet.trainer_id !== loggedInUserId);
+                                    allPets = allPets.concat(trainerPets);
+                                })
+                                .catch(error => {
+                                    console.error(`Error fetching pets for trainer ${trainerId}:`, error);
+                                })
+                        );
+            
+                        Promise.all(petRequests).then(() => {
+                            if (allPets.length === 0) {
+                                battleAreaContainer.innerHTML = '<p>No available pets for battle.</p>';
+                                return;
+                            }
+            
+                            allPets.forEach(pet => {
+                                const petCard = document.createElement('div');
+                                petCard.classList.add('pokemon-card');
+                                const level = Math.floor((parseInt(pet.total_training_skillpoints) + 50) / 50);
+                                petCard.innerHTML = `
+                                    <h4>${pet.pet_name}</h4>
+                                    <p>pet_id: ${pet.pet_id}</p>
+                                    <p>${pet.species}</p>
+                                    <p>Level: ${level}</p>
+                                    <button class="btn btn-primary battle-btn" data-pet-id="${pet.pet_id}" data-pet-name="${pet.pet_name}">Select for Battle</button>
+                                `;
+                                battleAreaContainer.appendChild(petCard);
+                            });
+
+                            // Attach event listener for battle selection (for the opponent)
+                            const battleBtns = document.querySelectorAll('.battle-btn');
+                            battleBtns.forEach(button => {
+                                button.addEventListener('click', function() {
+                                    opponentPetId = button.getAttribute('data-pet-id');
+                                    startBattle();
+                                });
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user IDs:', error);
+                    });
+            }
+
+            // Start battle when both challenger and opponent are selected
+            function startBattle() {
+                if (!challengerPetId || !opponentPetId) {
+                    console.log("Both a challenger and an opponent need to be selected.");
+                    return;
+                }
+
+                // Enable battle button and start battle
+                const battleButton = document.getElementById('battleButton');
+                battleButton.disabled = false;
+
+                // Remove previous event listener
+                battleButton.removeEventListener('click', handleBattleClick);
+                
+                // Add event listener only once
+                battleButton.addEventListener('click', handleBattleClick);
+            }
+
+            // Handle the battle click
+            function handleBattleClick() {
+                axios.post('http://localhost:3000/pets/battles', {
+                    challenger_pet_id: challengerPetId,
+                    opponent_pet_id: opponentPetId
+                })
+                .then(response => {
+                    const battleResult = response.data;
+                    const battleLog = document.getElementById('battleLog');
+                    
+                    battleLog.innerHTML = `<p>Battle Result:</p>
+                                           <p>pet_id: ${battleResult.winner_pet_id} won the battle!</p>`;
+                    // Reset battle state after battle is over
+                    challengerPetId = null;
+                    opponentPetId = null;
+                    document.getElementById('battleButton').disabled = true;
+                })
+                .catch(error => {
+                    console.error('Error starting battle:', error);
+                });
+            }
+
+            // Fetch and display battle area pets when the page loads
+            displayBattleArea();
         });
     </script>
-    
-    
+
 </body>
 </html>
+
+                   
