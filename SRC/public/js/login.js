@@ -9,3 +9,5 @@ signUpButton.addEventListener('click', () => {
 signInButton.addEventListener('click', () => {
 	container.classList.remove("right-panel-active");
 });
+
+jqueryMethod(currentUrl + '/api/users/login', callback, "POST", data)

@@ -21,6 +21,13 @@ const reviewRoutes = require('./reviewRoutes');
 const userController = require('../controller/userController');
 const jwtMiddleware = require('../middleware/jwtMiddleware');
 
+const path = require("path");
+router.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../public/login.html"));
+});
+
+
+
 
 
 
