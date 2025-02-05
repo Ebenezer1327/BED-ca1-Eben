@@ -22,8 +22,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static('public'));
 
 
-
-
 // Routes
 const mainRoutes = require('./routes/mainRoutes');
 app.use("/", mainRoutes);

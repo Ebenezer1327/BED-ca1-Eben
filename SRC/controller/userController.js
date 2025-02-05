@@ -41,6 +41,7 @@ module.exports = {
       const userId = await userModel.createUser(username, email, hashedPassword);
       res.status(201).json({message: "User registered successfully!", user_id: userId, username, email });
     } catch (err) {
+      console.log(err)
       res.status(500).json({message: "Failed to register"});
     }
   },
