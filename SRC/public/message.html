@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -37,23 +38,14 @@
             font-size: 16px;
         }
 
-        #userList {
-            list-style-type: none;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-
-        #userList li {
+        .card {
             cursor: pointer;
-            padding: 12px;
-            border: 1px solid #ddd;
             margin-bottom: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            transition: transform 0.3s;
         }
 
-        #userList li:hover {
-            background-color: #e9ecef;
+        .card:hover {
+            transform: scale(1.05);
         }
 
         #messageInput {
@@ -86,22 +78,53 @@
             cursor: not-allowed;
         }
 
-        #messageDisplay {
-            margin-top: 20px;
-            border: 1px solid #ddd;
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay-content {
+            background: white;
             padding: 20px;
+            width: 400px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .message-history {
+            height: 300px;
+            overflow-y: auto;
+            background-color: #f0f0f0;
+            padding: 10px;
             border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .message-bubble {
+            padding: 10px;
             background-color: #ffffff;
-            min-height: 150px;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-bottom: 5px;
+            width: fit-content;
+            max-width: 70%;
         }
 
-        .message {
-            margin-bottom: 15px;
+        .message-history .message-bubble.me {
+            background-color: #4CAF50 !important;
+            margin-left: auto;
         }
 
-        .message strong {
-            color: #007bff;
+
+        .message-bubble.them {
+            background-color: #ffffff;
+            margin-right: auto;
         }
     </style>
 </head>
@@ -110,42 +133,23 @@
     <nav class="navbar navbar-expand-lg fixed-top bg-light navbar-light">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="MDB Logo" draggable="false" height="30" />
+                <img id="MDB-logo" src="../Images/International_Pokémon_logo.svg.png" alt="Pokémon Logo" draggable="false" height="30" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto align-items-center">
-
-                    <div id="user-id-display" class="pe-10"></div> <!-- This is where the user_id will be displayed -->
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="fitness.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mx-2" href="review.html"><i class="fas fa-comment-dots pe-2"></i>Reviews</a>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a>
-                    </li>
+                    <div id="user-id-display" class="pe-10"></div> <!-- Display user_id -->
+                    <li class="nav-item"><a class="nav-link mx-2" href="gameHome.html"><i class="fas fa-home pe-2"></i>Home</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="pets.html"><i class="fas fa-paw pe-2"></i>Pets</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="levelup.html"><i class="fas fa-level-up-alt pe-2"></i>Level UP</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="addFriend.html"><i class="fas fa-user-plus pe-2"></i>Add Friend</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="message.html"><i class="fas fa-envelope pe-2"></i>Message</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="profile.html"><i class="fas fa-user pe-2"></i>Profile</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="fitness.html"><i class="fas fa-dumbbell pe-2"></i>Fitness</a></li>
+                    <li class="nav-item"><a class="nav-link mx-2" href="review.html"><i class="fas fa-comment-dots pe-2"></i>Reviews</a></li>
+                    <li class="nav-item ms-3"><a class="btn btn-dark btn-rounded" href="login.html">Sign Out</a></li>
                 </ul>
             </div>
         </div>
@@ -153,64 +157,118 @@
 
     <h1>Message Page</h1>
     <input type="text" id="userSearch" placeholder="Search for a user ID">
-    <ul id="userList"></ul>
-    <input type="text" id="messageInput" placeholder="Type your message here" disabled>
-    <button id="sendButton" disabled>Send</button>
-    <div id="messageDisplay"></div>
+    <div id="userList" class="row"></div>
+
+    <!-- Message Overlay -->
+    <div id="messageOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2 id="recipientName"></h2>
+            <div id="messageHistory" class="message-history"></div>
+            <textarea id="messageInput" placeholder="Type your message here..."></textarea>
+            <button id="sendButton" class="btn btn-success">Send</button>
+            <button id="closeOverlay" class="btn btn-danger">Close</button>
+        </div>
+    </div>
 
     <script>
-        const users = [
-            { id: 'user1', name: 'Alice' },
-            { id: 'user2', name: 'Bob' },
-            { id: 'user3', name: 'Charlie' },
-            { id: 'user4', name: 'David' },
-            { id: 'user5', name: 'Eve' }
-        ];
+        const userId = localStorage.getItem('user_id');
 
-        const userSearch = document.getElementById('userSearch');
-        const userList = document.getElementById('userList');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-        const messageDisplay = document.getElementById('messageDisplay');
+        axios.get(`http://localhost:3000/friendship/list/${userId}`)
+            .then(friendshipResponse => {
+                const friends = friendshipResponse.data;
 
-        let selectedUser = null;
+                return axios.get('http://localhost:3000/users').then(usersResponse => {
+                    const users = usersResponse.data;
+                    const userListDiv = document.getElementById('userList');
+                    userListDiv.innerHTML = '';
 
-        function populateUserList(filter = '') {
-            userList.innerHTML = '';
-            users.filter(user => user.id.includes(filter) || user.name.toLowerCase().includes(filter.toLowerCase()))
-                 .forEach(user => {
-                     const li = document.createElement('li');
-                     li.textContent = `${user.id} - ${user.name}`;
-                     li.onclick = () => selectUser(user);
-                     userList.appendChild(li);
-                 });
+                    friends.forEach(friend => {
+                        const userDetails = users.find(user => user.user_id === friend.user_id);
+                        if (userDetails) {
+                            const userCard = document.createElement('div');
+                            userCard.classList.add('col-md-4', 'mb-4');
+                            userCard.innerHTML = `
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${userDetails.username}</h5>
+                                        <p class="card-text">${userDetails.email}</p>
+                                        <button class="btn btn-primary message-btn" data-userid="${userDetails.user_id}" data-username="${userDetails.username}">Message</button>
+                                    </div>
+                                </div>
+                            `;
+                            userListDiv.appendChild(userCard);
+                        }
+                    });
+
+                    // Event listener for message buttons
+                    document.querySelectorAll('.message-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const recipientId = event.target.dataset.userid;
+                            const recipientName = event.target.dataset.username;
+                            document.getElementById('recipientName').innerText = `${recipientName}`;
+                            document.getElementById('messageOverlay').style.display = 'flex';
+                            document.getElementById('sendButton').dataset.userid = recipientId;
+
+                            // Fetch conversation history
+                            fetchConversationHistory(userId, recipientId);
+                        });
+                    });
+                });
+            });
+
+        function fetchConversationHistory(userId, recipientId) {
+            axios.get(`http://localhost:3000/message/conversation/${userId}?friend_id=${recipientId}`)
+                .then(response => {
+                    const messages = response.data;
+                    const messageHistoryDiv = document.getElementById('messageHistory');
+                    messageHistoryDiv.innerHTML = '';
+
+                    console.log(`Current User ID: ${userId}`);
+
+                messages.forEach(message => {
+                    console.log(`Message from User ID: ${message.sender_id} intended for comparison with ${userId}`);
+                    const isCurrentUser = Number(message.sender_id) == Number(userId);
+
+                    console.log(`Is Current User: ${isCurrentUser}`);
+                    
+                    const messageBubble = document.createElement('div');
+                    messageBubble.classList.add('message-bubble', isCurrentUser ? 'me' : 'them');
+                    messageBubble.innerText = message.message_text;
+                    messageHistoryDiv.appendChild(messageBubble);
+                });
+
+                })
+                .catch(error => {
+                    console.error('Error fetching conversation:', error);
+                });
         }
 
-        function selectUser(user) {
-            selectedUser = user;
-            userSearch.value = `${user.id} - ${user.name}`;
-            messageInput.disabled = false;
-            sendButton.disabled = false;
-            userList.innerHTML = '';
-        }
+        // Event listener to send a message
+        document.getElementById('sendButton').addEventListener('click', async () => {
+            const recipientId = document.getElementById('sendButton').dataset.userid;
+            const messageText = document.getElementById('messageInput').value;
 
-        function sendMessage() {
-            if (selectedUser && messageInput.value.trim() !== '') {
-                const message = messageInput.value.trim();
-                messageDisplay.innerHTML += `<div class="message"><strong>To ${selectedUser.name}:</strong> ${message}</div>`;
-                messageInput.value = '';
+            if (messageText.trim() === '') {
+                alert("Message cannot be empty!");
+                return;
             }
-        }
 
-        userSearch.addEventListener('input', () => populateUserList(userSearch.value));
-        sendButton.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
+            try {
+                await axios.post('http://localhost:3000/message/send', {
+                    sender_id: userId,
+                    receiver_id: recipientId,
+                    message_text: messageText
+                });
+                document.getElementById('messageInput').value = '';
+                fetchConversationHistory(userId, recipientId);  // Refresh conversation history
+            } catch (error) {
+                console.error("Error sending message:", error);
             }
         });
 
-        populateUserList();
+        document.getElementById('closeOverlay').addEventListener('click', () => {
+            document.getElementById('messageOverlay').style.display = 'none';
+        });
     </script>
 </body>
 </html>

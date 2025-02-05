@@ -25,14 +25,20 @@ module.exports = {
         const [rows] = await db.query('SELECT * FROM user WHERE user_id = ?', [user_id]);
         return rows;
     },
-      async updateSkillPoints(user_id, skillpoints) {
-        try {
-            await db.query('UPDATE user SET skillpoints = ? WHERE user_id = ?', [skillpoints, user_id]);
-        } catch (error) {
-            console.error('Error updating skill points:', error.message);
-            throw new Error('Failed to update skill points');
-        }
-    },    
+    async updateSkillPoints(user_id, skillpoints) {
+      console.log(`Updating skill points for user ${user_id}: Adding ${skillpoints}`);
+      try {
+          await db.query('UPDATE user SET skillpoints = skillpoints WHERE user_id = ?', [skillpoints, user_id]);
+          console.log(skillpoints)
+      } catch (error) {
+          console.error('Error updating skill points:', error.message);
+          throw new Error('Failed to update skill points');
+      }
+  },
+  
+  
+  
+  
       async updateUser(user_id, username, skillpoints) {
         // Check if the user exists
         const [userExists] = await db.query('SELECT * FROM user WHERE user_id = ?', [user_id]);

@@ -104,6 +104,35 @@
             margin-top: 20px;
         }
 
+         /* Add styling for the create button */
+         #createButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            font-size: 24px;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #createButton:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        #createButton i {
+            font-size: 28px;
+        }
+
     </style>
 </head>
 <body>
@@ -142,6 +171,11 @@
     <div id="battleArea"></div>
     <button id="battleButton" disabled>Start Battle</button>
     <div id="battleLog" aria-live="polite"></div>
+
+    <!-- Create Button -->
+    <button id="createButton" title="Create New Pet">
+        <i class="fas fa-plus"></i>
+    </button>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -296,6 +330,34 @@
                     console.error('Error starting battle:', error);
                 });
             }
+
+              // Add event listener for the Create button to add a new pet
+              document.getElementById('createButton').addEventListener('click', function() {
+                const petName = prompt("Enter your pet's name:");
+                const species = prompt("Enter the species of your pet:");
+
+                if (petName && species) {
+                    const newPetData = {
+                        trainer_id: userId,
+                        pet_name: petName,
+                        species: species,
+                        base_skillpoints: 50
+                    };
+
+                    axios.post('http://localhost:3000/pets', newPetData)
+                        .then(response => {
+                            console.log('New pet added:', response.data);
+                            alert(`Your pet "${petName}" has been created successfully!`);
+                            window.location.reload(); // Reload the page to show the new pet
+                        })
+                        .catch(error => {
+                            console.error('Error creating new pet:', error);
+                        });
+                } else {
+                    alert("Please provide both pet name and species.");
+                }
+            });
+        
 
             // Fetch and display battle area pets when the page loads
             displayBattleArea();

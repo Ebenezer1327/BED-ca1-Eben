@@ -15,7 +15,7 @@ module.exports = {
     try {
       const [rows] = await db.query(
         `SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
-         ORDER BY timestamp DESC`,
+         ORDER BY timestamp ASC`,
         [user_id1, user_id2, user_id2, user_id1]
       );
       return rows;

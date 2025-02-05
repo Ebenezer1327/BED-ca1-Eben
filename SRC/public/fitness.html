@@ -251,6 +251,26 @@
                         
                         // Update skill points on the page
                         document.getElementById('skillpoints').textContent = `Your skill points: ${newSkillPoints}`;
+
+
+                        const completionStatus = result === 'pass' ? 1 : 0;  // 1 for pass, 0 for fail
+                        const date = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+                        axios.post(`http://localhost:3000/challenges/${challengeId}`, {
+                        user_id: userId,
+                        completed: completionStatus,
+                        creation_date: new Date().toISOString().slice(0, 19).replace("T", " "),  // Adjusted datetime format
+                        notes: completionStatus === 0 ? "You'll get 5 points for trying!" : ""
+                         })
+
+                        .then(logResponse => {
+                            console.log("Challenge completion logged:", logResponse.data);
+                        })
+                        .catch(logError => {
+                            console.error("Error logging challenge completion:", logError.response ? logError.response.data : logError.message);
+                            alert("Failed to log challenge completion. Please try again.");
+                        });
+
                     })
                     .catch(updateError => {
                         console.error("Error updating skill points:", updateError.response ? updateError.response.data : updateError.message);
@@ -271,6 +291,7 @@
         alert("Failed to get user data. Please try again.");
     });
 }
+
 
 
     </script>

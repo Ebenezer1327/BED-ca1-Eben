@@ -37,7 +37,7 @@ module.exports = {
 async getConversation(req, res) {
   try {
     const user_id = req.params.user_id;
-    const { friend_id } = req.body;
+    const friend_id = req.query.friend_id; // Changed to access query parameter
 
     // Ensure both user_id and friend_id are provided
     if (!user_id || !friend_id) {
