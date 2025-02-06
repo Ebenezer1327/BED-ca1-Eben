@@ -17,7 +17,7 @@ Before running the tests, ensure that the following dependencies are installed:
 
 3. Click on the "Clone Repository" button.
 
-4. In the repository URL input field, enter `https://github.com/ST0503-BED/your-repository-name.git`.
+4. In the repository URL input field, enter `https://github.com/Ebenezer1327/BED-ca1-Eben`.
 
 5. Choose a local directory where you want to clone the repository.
 
@@ -49,7 +49,7 @@ To set up environment variables for your Express.js application, follow these st
    DB_HOST=localhost
    DB_USER=myuser
    DB_PASSWORD=mypassword
-   DB_DATABASE=pokemon
+   DB_DATABASE=ca2Fitness
    ```
 
    Note: Make sure there are no spaces around the equal sign (=) in each line.
@@ -61,23 +61,19 @@ To set up environment variables for your Express.js application, follow these st
 The `db.js` file in the `src/services` directory uses the `dotenv` package to read the `.env` file and set the environment variables. Here's an example of how the `db.js` file should look:
 
 ```javascript
-require('dotenv').config(); // Read .env file and set environment variables
-
 const mysql = require('mysql2');
+require('dotenv').config();
 
-const setting = {
-    connectionLimit: 10, // Set limit to 10 connections
-    host: process.env.DB_HOST, // Get host from environment variable
-    user: process.env.DB_USER, // Get user from environment variable
-    password: process.env.DB_PASSWORD, // Get password from environment variable
-    database: process.env.DB_DATABASE, // Get database from environment variable
-    multipleStatements: true, // Allow multiple SQL statements
-    dateStrings: true // Return date as string instead of Date object
-}
+const mysqlpool = mysql.createPool({
+    host: process.env.DB_HOST, 
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    multipleStatements: true
+});
 
-const pool = mysql.createPool(setting);
 
-module.exports = pool;
+module.exports = mysqlpool.promise();
 ```
 
 The `dotenv` package is used to load the environment variables from the `.env` file, and `process.env` is used to access these variables in your code.
@@ -92,7 +88,7 @@ That's it! You have successfully set up environment variables using a `.env` fil
 
 Now you can move on to next part below.
 
-## Install Dependencies
+## Install Dependencies & Steps
 
 1. Open the terminal in VSCode by going to `View` > `Terminal` or using the shortcut `Ctrl + ``.
 
@@ -101,49 +97,156 @@ Now you can move on to next part below.
 3. Install the required dependencies using npm:
 
    ```
-   npm install
+    npm install
+    npm install bcrypt
+    npm install cors
+    npm install dotenv
+    npm install express
+    npm install jsonwebtoken
+    npm install mysql2
+    npm install nodemon
+    npm install winston
+
    ```
 
-## Database Initialization
+   replace the script in package.json 
 
-1. Make sure you have a MySQL database available for the mock test. Update the database configuration details in the `.env` file.
+   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "init_tables": "node src/config/createSchema.js && node src/config/initTable.js"
+   }
 
-## Commit and Sync Changes
+4. You may run npm run init_tables
 
-1. Open the Source Control view in VSCode by clicking on the "Source Control" icon in the left sidebar.
-
-2. Review the changes you made to the files.
-
-3. Enter a commit message summarizing your changes in the input field at the top of the Source Control view.
-
-4. Click on "Commit" to commit the changes.
-
-5. Click on "Sync" to push your changes to the remote repository.
-
-   Note: Make sure you have the necessary permissions to push changes to the repository.
-
-## Submission
-
-Once you have completed the practical and synchronized your changes, check the autograde of your submission.
+5. After creating tables you can run npm start
 
 **You may read the Test Cases below**
 
 ## Test Cases
 
-The test cases cover different aspects of the Express.js API, including the following:
+Step 1: register with your username, email, password (daryl, daryl@gmail.com, daryl)
 
-- Testing GET routes
-- Testing POST routes
-- Testing PUT routes
-- Testing DELETE routes
-- Validating package.json contents
-- Performing basic read operations on the database
+Step 2: Login 
 
-Each test case make HTTP requests to the API routes and validate the responses against expected values.
+Step 3: Get 300 fitness points at fitness section
 
+Step 4: Go Pets page press "+" to Create Pet (Any Name & Any Type)
+
+Step 5: Go to level up page to level up pet using all 300 skillpoints 
+
+Step 6: Sign Out 
+
+Step 7: register with a new username, email, password (eben, eben@gmail, eben)
+
+Step 8: Login 
+
+Step 9: Get 100 fitness points at fitness section
+
+Step 10: Go Pets page press "+" to Create Pet (Any Name & Any Type)
+
+Step 11: Go to level up page to level up pet using all 200 skillpoints 
+
+Step 12: Go back to pets page 
+
+Step 13: Select pet_id 1 and Select pet_id 2. Should be Winner_petid = 1 
+
+Step 14: Go profile to check skillpoints and also the username
+
+Step 15: Press Upload Photo to upload any photo
+
+Step 16: Refresh Page
+
+Step 17: Go to Add friend page to add eben 
+
+Step 18: Go to the Message and message eben "Hello i am daryl" 
+
+Step 19: Sign Out and login daryl account 
+
+Step 20: Go to message page to reply eben 
+
+Step 21: Go review page to give a review of the game for both eben and daryl
+
+
+
+### File Structure 
+
+.
+└── BED-ca1-Eben/
+    ├── node_modules
+    ├── src/
+    │   ├── config/
+    │   │   ├── createSchema.js
+    │   │   ├── db.js
+    │   │   └── initTable.js
+    │   ├── controller/
+    │   │   ├── fitnessController.js
+    │   │   ├── friendshipController.js
+    │   │   ├── messageController.js
+    │   │   ├── PetController.js
+    │   │   ├── reviewController.js
+    │   │   └── userController.js
+    │   ├── middleware/
+    │   │   ├── jwtMiddleware.js
+    │   │   └── logger.js
+    │   ├── models/
+    │   │   ├── fitnessModel.js
+    │   │   ├── friendshipModel.js
+    │   │   ├── messageModel.js
+    │   │   ├── PetModel.js
+    │   │   ├── reviewModel.js
+    │   │   └── userModel.js
+    │   ├── public/
+    │   │   ├── css/
+    │   │   │   ├── addFriend.css
+    │   │   │   ├── fitness.css
+    │   │   │   ├── gameHome.css
+    │   │   │   ├── levelup.css
+    │   │   │   ├── login.css
+    │   │   │   ├── message.css
+    │   │   │   ├── pets.css
+    │   │   │   ├── profile.css
+    │   │   │   └── review.css
+    │   │   ├── images
+    │   │   ├── js/
+    │   │   │   ├── addFriend.js
+    │   │   │   ├── fitness.js
+    │   │   │   ├── gameHome.js
+    │   │   │   ├── levelup.js
+    │   │   │   ├── login.js
+    │   │   │   ├── message.js
+    │   │   │   ├── pets.js
+    │   │   │   ├── profile.js
+    │   │   │   └── review.js
+    │   │   ├── addFriend.html
+    │   │   ├── fitness.html
+    │   │   ├── gameHome.html
+    │   │   ├── levelup.html
+    │   │   ├── login.html
+    │   │   ├── message.html
+    │   │   ├── pets.html
+    │   │   ├── profile.html
+    │   │   └── review.html
+    │   ├── routes/
+    │   │   ├── fitnessRoutes.js
+    │   │   ├── friendshipRoutes.js
+    │   │   ├── messageRoutes.js
+    │   │   ├── PetRoutes.js
+    │   │   ├── reviewRoutes.js
+    │   │   └── userRoutes.js
+    │   ├── views/
+    │   │   └── responseView.js
+    │   └── app.js
+    ├── .env
+    ├── .gitignore
+    ├── package.json
+    ├── package-lock.json
+    └── README.md
 
 
 ### Basic GET Routes
+## Ca1
 
 - `GET /user`:
   - Validates that the endpoint returns a 200 status code.
@@ -306,20 +409,3 @@ Show Error 403
 
 - The tests assume the presence of a MySQL database and use the `mysql2` package for database interactions. Make sure to configure the database connection details in your Express.js application.
 - The tests also assume the usage of the `pool` object from `src/services/db.js` for database operations.
-
-## Test Execution
-
-When you commit and push your changes, the GitHub Actions workflow will automatically run the unit tests. The test results will be displayed in the issues section of your GitHub repository.
-
-The workflow includes a step that creates a new issue with the test results. The issue will include the following metrics:
-
-| Metric           | Value        |
-| ---------------- | ------------ |
-| Total Pass       | \<pass count\>    |
-| Total Failed     | \<fail count\>    |
-| Total Tests      | \<total count\>   |
-| Pass Percentage  | \<pass percentage\>% |
-
-This allows you to easily track the test results and investigate any failures.
-
-Please note that the result is generated based on the structure and format of your unit tests. Make sure your tests produce the necessary output for the issue creation step to work correctly.

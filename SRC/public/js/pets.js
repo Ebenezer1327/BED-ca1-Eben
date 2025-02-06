@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", function() {
     let challengerPetId = null;
     let opponentPetId = null;
 
+    const battleButton = document.getElementById('battleButton');
+    battleButton.disabled = true; // Start as disabled
+
     // Get the logged-in user's ID from localStorage
     const loggedInUserId = localStorage.getItem('user_id'); 
     
@@ -34,23 +37,38 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p>pet_id: ${pokemon.pet_id}</p>
                     <p>${pokemon.species}</p>
                     <p>Level: ${level}</p>
-                    <button class="btn btn-primary battle-btn" data-pet-id="${pokemon.pet_id}" data-pet-name="${pokemon.pet_name}">Select for Battle</button>
+                    <button class="btn btn-primary challenger-btn" data-pet-id="${pokemon.pet_id}" data-pet-name="${pokemon.pet_name}">Select for Battle</button>
                 `;
                 pokemonListContainer.appendChild(pokemonCard);
             });
     
-            // Attach event listener for battle selection (for the challenger)
-            const battleBtns = document.querySelectorAll('.battle-btn');
-            battleBtns.forEach(button => {
-                button.addEventListener('click', function() {
-                    challengerPetId = button.getAttribute('data-pet-id');
-                    startBattle();
-                });
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching Pokémon:', error);
+           // Attach event listener for challenger selection
+    document.querySelectorAll('.challenger-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            challengerPetId = button.getAttribute('data-pet-id');
+            console.log(`Challenger selected: ${challengerPetId}`);
+            updateBattleButton();
         });
+    });
+})
+.catch(error => {
+    console.error('Error fetching Pokémon:', error);
+});
+
+document.getElementById('searchInput').addEventListener('input', function(event) {
+const searchTerm = event.target.value.toLowerCase();
+const pokemonCards = document.querySelectorAll('.pokemon-card');
+
+pokemonCards.forEach(card => {
+const petName = card.querySelector('h4').textContent.toLowerCase();
+if (petName.includes(searchTerm)) {
+    card.style.display = '';
+} else {
+    card.style.display = 'none';
+}
+});
+});
+
 
     // Display battle-ready Pokémon from other trainers
     function displayBattleArea() {
@@ -91,25 +109,25 @@ document.addEventListener("DOMContentLoaded", function() {
                             <p>pet_id: ${pet.pet_id}</p>
                             <p>${pet.species}</p>
                             <p>Level: ${level}</p>
-                            <button class="btn btn-primary battle-btn" data-pet-id="${pet.pet_id}" data-pet-name="${pet.pet_name}">Select for Battle</button>
+                            <button class="btn btn-primary opponent-btn" data-pet-id="${pet.pet_id}" data-pet-name="${pet.pet_name}">Select for Battle</button>
                         `;
                         battleAreaContainer.appendChild(petCard);
                     });
 
-                    // Attach event listener for battle selection (for the opponent)
-                    const battleBtns = document.querySelectorAll('.battle-btn');
-                    battleBtns.forEach(button => {
-                        button.addEventListener('click', function() {
-                            opponentPetId = button.getAttribute('data-pet-id');
-                            startBattle();
-                        });
-                    });
+                     // Attach event listener for opponent selection
+            document.querySelectorAll('.opponent-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    opponentPetId = button.getAttribute('data-pet-id');
+                    console.log(`Opponent selected: ${opponentPetId}`);
+                    updateBattleButton();
                 });
-            })
-            .catch(error => {
-                console.error('Error fetching user IDs:', error);
             });
-    }
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching user IDs:', error);
+    });
+}
 
     // Start battle when both challenger and opponent are selected
     function startBattle() {
@@ -179,6 +197,42 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-    // Fetch and display battle area pets when the page loads
-    displayBattleArea();
+   // Enable battle button only when both are selected
+function updateBattleButton() {
+if (challengerPetId && opponentPetId) {
+    battleButton.disabled = false;
+} else {
+    battleButton.disabled = true;
+}
+}
+
+// Start battle
+battleButton.addEventListener('click', function () {
+if (!challengerPetId || !opponentPetId) {
+    console.log("Both a challenger and an opponent need to be selected.");
+    return;
+}
+
+axios.post('http://localhost:3000/pets/battles', {
+    challenger_pet_id: challengerPetId,
+    opponent_pet_id: opponentPetId
+})
+.then(response => {
+    const battleResult = response.data;
+    const battleLog = document.getElementById('battleLog');
+
+    battleLog.innerHTML = `<p>Battle Result:</p>
+                           <p>pet_id: ${battleResult.winner_pet_id} won the battle!</p>`;
+    // Reset battle state after battle is over
+    challengerPetId = null;
+    opponentPetId = null;
+    battleButton.disabled = true;
+})
+.catch(error => {
+    console.error('Error starting battle:', error);
+});
+});
+
+// Fetch and display battle area pets when the page loads
+displayBattleArea();
 });

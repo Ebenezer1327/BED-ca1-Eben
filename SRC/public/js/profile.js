@@ -12,21 +12,30 @@ if (loggedInUserId) {
     userIdDisplay.textContent = 'No user is logged in.';
 }
 
-// Function to handle photo upload
 function handlePhotoUpload(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            profilePhoto.src = e.target.result;
-            profilePhoto.alt = "User uploaded profile photo";
+            const imageData = e.target.result;
+            profilePhoto.src = imageData;
+            localStorage.setItem(`profilePhoto_${loggedInUserId}`, imageData); // Store in localStorage
         }
         reader.readAsDataURL(file);
     }
 }
 
-// Add event listener for photo upload
+// Load stored profile photo when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    const savedPhoto = localStorage.getItem(`profilePhoto_${loggedInUserId}`);
+    if (savedPhoto) {
+        profilePhoto.src = savedPhoto;
+    }
+});
+
 photoUpload.addEventListener('change', handlePhotoUpload);
+
+
 
 // Function to fetch and update skillpoints and username based on logged-in user
 function fetchUserProfile() {
