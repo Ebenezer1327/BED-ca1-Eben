@@ -126,7 +126,7 @@ Now you can move on to next part below.
 
 ## Test Cases
 
-Step 1: register with your username, email, password (daryl, daryl@gmail.com, daryl)
+Step 1: register with your username, email, password (daryl, daryl@gmail.com, darylBest!)
 
 Step 2: Login 
 
@@ -138,7 +138,7 @@ Step 5: Go to level up page to level up pet using all 300 skillpoints
 
 Step 6: Sign Out 
 
-Step 7: register with a new username, email, password (eben, eben@gmail, eben)
+Step 7: register with a new username, email, password (eben, eben@gmail, ebenezer!)
 
 Step 8: Login 
 
