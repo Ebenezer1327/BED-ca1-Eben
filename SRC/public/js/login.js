@@ -15,6 +15,14 @@ function registerUser() {
     const username = document.getElementById("signup-username").value;
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
+    const passwordRegex = /^(?=.*[!@#$%^&*]).{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = "Password must be at least 8 characters long and include at least one special character (!@#$%^&*).";
+        messageDiv.style.color = 'red';
+        return;  // Stop the function if the password does not meet the requirement
+    }
 
     axios.post("http://localhost:3000/users/register", { username, email, password })
 	.then(function (response) {
