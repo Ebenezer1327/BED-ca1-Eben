@@ -40,8 +40,8 @@ h1, h2 {
 
 /* Highlight selected Pokémon */
 .pokemon-card.selected {
-    border: 2px solid #007bff;
-    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.6);
+    border: 2px solid #fbff12;
+    box-shadow: 0px 0px 10px rgb(240, 255, 106);
     transform: scale(1.1);
 }
 
@@ -74,7 +74,7 @@ h1, h2 {
 
 .pokemon-card:hover {
     transform: scale(1.05);
-    box-shadow: 0px 0px 15px rgba(29, 161, 255, 0.7);
+    box-shadow: 0px 0px 15px rgb(255, 255, 29);
 }
 
 .pokemon-card img {

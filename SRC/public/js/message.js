@@ -9,7 +9,7 @@ const userId = localStorage.getItem('user_id');
                     const userListDiv = document.getElementById('userList');
                     userListDiv.innerHTML = '';
 
-                    friends.forEach(friend => {
+                    friends.forEach(friend => {z
                         const userDetails = users.find(user => user.user_id === friend.user_id);
                         if (userDetails) {
                             const userCard = document.createElement('div');

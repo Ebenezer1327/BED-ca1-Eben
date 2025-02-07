@@ -15,7 +15,7 @@ if (loggedInUserId) {
 function handlePhotoUpload(event) {
     const file = event.target.files[0];
     if (file) {
-        const reader = new FileReader();
+        const reader = new FileReader();z
         reader.onload = function(e) {
             const imageData = e.target.result;
             profilePhoto.src = imageData;
